@@ -1,6 +1,5 @@
 # Engine and tests. Versions are the ones the tests were last run with
-# (Python 3.13). Training needs PyTorch and zstandard as well; those are
-# listed separately once the training scripts have been re-run.
+# (Python 3.13). Training needs PyTorch and zstandard as well: requirements-train.txt.
 numpy==2.5.3
 numba==0.68.0
 chess==1.11.2

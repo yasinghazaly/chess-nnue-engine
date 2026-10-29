@@ -14,8 +14,8 @@ Why they differ:
 
 - **nn1** read a downloaded copy of the Lichess file, so downloading was a separate
   script. `compare_eval.py` was its check against the hand-written evaluation,
-  written before the gate existed. It imports an older single-file engine that is
-  not in this repository.
+  written before the gate existed; it now runs the engine in `engine/` with the
+  network flags off, which is version 7 exactly.
 - **nn2** is where the training recipe was settled: the 2 × 2 sweep and the gate
   were built around it. Its parser streams the Lichess file directly.
   `nnue_v2_int16.bin` is its int16 weights as version 9 shipped them, kept so the gate

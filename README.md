@@ -204,7 +204,7 @@ Python 3.13. From the repository root:
 
 ```bash
 pip install -r requirements.txt
-python -m pytest tests -v                      # 85 tests, about two minutes
+python -m pytest tests -v                      # 87 tests, about three minutes
 python training/regate.py                      # the gate tables above
 python scripts/build_submission.py             # writes build/agent.py
 ```
@@ -220,16 +220,31 @@ The first import compiles the engine (about a minute).
 - the gate script's evaluator matches the engine's on the third network, and
   reproduces version 9's scores from the second network's weights;
 - the parsers keep and drop the right positions, on hand-made database lines;
-- the built single file matches the same reference.
+- the built single file matches the same reference;
+- with its network flag off the engine plays exactly like the original version 8
+  file, and with both network flags off exactly like version 7 (evaluations, and
+  move, score and node count at every search depth), so move generation and search
+  are unchanged since version 7 and the matches above compare evaluations;
+- the training pipelines run end to end on a small input (parse, train, export,
+  gate), repeat bit for bit with a fixed seed and step count, and write weights in
+  the engine's format. These need PyTorch:
 
-CI runs them on every push ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)).
+```bash
+pip install -r requirements-train.txt --extra-index-url https://download.pytorch.org/whl/cpu
+python -m pytest tests/test_training.py -v     # about a minute on CPU
+```
+
+CI runs both sets on every push ([`.github/workflows/tests.yml`](.github/workflows/tests.yml)).
 
 **Matches** need a clone of the starter harness and the engine files; see the
 docstring of [`matches/match.py`](matches/match.py).
 
 **Training** needs the Lichess file (large; the parsers stream it) and a GPU for
 reasonable speed. Training data is not in this repository. Each script's docstring
-gives its commands; see also [`training/README.md`](training/README.md).
+gives its commands; see also [`training/README.md`](training/README.md). By default
+the trainers run for a time budget, as the shipped networks were trained;
+`--steps` fixes the length instead, and `--deterministic` makes a run repeat bit
+for bit on one CPU thread.
 
 ## Limits
 
@@ -242,9 +257,10 @@ gives its commands; see also [`training/README.md`](training/README.md).
 - **No tactical test suite.** The gate checks static evaluations and a handful of
   hand-picked positions.
 - **The benchmark is small** (3,071 positions) and comes from the engine's own games.
-- **Training length depends on hardware.** The trainers set the number of steps
-  from a measured speed and a time budget, so a rerun on other hardware will not
-  repeat a run step for step.
+- **The shipped networks were trained to a time budget**, so the number of steps
+  depended on the hardware; a rerun with the default settings will not repeat them
+  step for step. Fixed-length, deterministic runs are available for new training
+  (`--steps`, `--deterministic`).
 - Several figures above come from the working log kept at the time and are marked
   as such; they have not been re-run here.
 

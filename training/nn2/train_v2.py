@@ -4,6 +4,8 @@
     python train_v2.py                  # the real run, 60 minute budget
     python train_v2.py --minutes 45     # a different budget
     python train_v2.py --resume         # continue from the last checkpoint
+    python train_v2.py --steps 20000    # fixed length: same steps and batches on any hardware (--seed, default 0)
+    python train_v2.py --steps 20000 --deterministic --cpu   # and bit for bit (one CPU thread; slow)
  
 Stop early at any time with:  touch STOP   (the weights file is always usable)
  
@@ -332,12 +334,19 @@ def main():
     ap.add_argument("--resume", action="store_true")
     ap.add_argument("--cpu", action="store_true", help="ignore the GPU")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--deterministic", action="store_true",
+                    help="one CPU thread and deterministic kernels, so a --steps run repeats bit for bit")
+    ap.add_argument("--steps", type=int, default=0,
+                    help="fixed number of steps; the default, 0, sets it from measured speed and --minutes, as run")
     args = ap.parse_args()
  
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
-    device = torch.device("cuda" if torch.cuda.is_available() and not args.cpu else "cpu")
-    if device.type == "cpu":
+    device = torch.device("cuda" if torch.cuda.is_available() and not (args.cpu or args.deterministic) else "cpu")
+    if args.deterministic:
+        torch.use_deterministic_algorithms(True)
+        torch.set_num_threads(1)
+    elif device.type == "cpu":
         torch.set_num_threads(max(1, os.cpu_count() or 1))
     stop_file = os.path.abspath("STOP")
     if os.path.exists(stop_file):
@@ -409,19 +418,22 @@ def main():
  
     # ---- speed measurement (also the first training steps) -----------------
     probe_s = 30.0 if args.probe else 20.0
-    for _ in range(10):
-        train_step()
-    sync()
-    tp = time.time()
-    k0 = step
-    while time.time() - tp < probe_s:
-        train_step()
-        if (step - k0) % 20 == 0:
-            sync()
-    sync()
-    sps = (step - k0) / (time.time() - tp)
-    pps = sps * args.batch
-    print(f"speed    : {pps / 1e6:.2f} M positions/s  ({sps:.1f} steps/s)", flush=True)
+    if args.steps and not args.probe:
+        sps = None                      # fixed schedule: no timed steps, so a rerun repeats step for step
+    else:
+        for _ in range(10):
+            train_step()
+        sync()
+        tp = time.time()
+        k0 = step
+        while time.time() - tp < probe_s:
+            train_step()
+            if (step - k0) % 20 == 0:
+                sync()
+        sync()
+        sps = (step - k0) / (time.time() - tp)
+        pps = sps * args.batch
+        print(f"speed    : {pps / 1e6:.2f} M positions/s  ({sps:.1f} steps/s)", flush=True)
  
     if args.probe:
         total = meta_rows or n
@@ -434,9 +446,10 @@ def main():
         return
  
     if total_steps is None:
-        total_steps = max(step + 100, int(sps * args.minutes * 60))
+        total_steps = args.steps or max(step + 100, int(sps * args.minutes * 60))
+    about = f"about {args.minutes:.0f} min" if sps else "fixed by --steps"
     print(f"plan     : {total_steps:,} steps = {total_steps * args.batch / 1e6:,.0f} M positions "
-          f"= {total_steps * args.batch / n_train:.1f} passes, about {args.minutes:.0f} min\n", flush=True)
+          f"= {total_steps * args.batch / n_train:.1f} passes, {about}\n", flush=True)
     print("   min |     step | passes |  lr      | train loss | val loss | val MAE cp | bench quiet  strict", flush=True)
  
     ck_every = max(200, total_steps // 25)

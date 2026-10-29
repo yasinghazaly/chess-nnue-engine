@@ -1,6 +1,8 @@
 """train_v3.py -- train NN3, the final evaluation network, for numbav10.
 
     python train_v3.py --hours 5        # the overnight run
+    python train_v3.py --steps 20000 --seed 0   # fixed length: same steps and batches on any hardware
+    python train_v3.py --steps 20000 --seed 0 --deterministic   # and bit for bit (one CPU thread; slow)
     touch STOP                          # end early; the best network is already saved
 
 Reads data_v3/shard_*.npz (from parse_v3.py). Put numbav9.py in the same
@@ -13,7 +15,9 @@ Network (same form as NN2, so the engine kernel only changes constants):
     a shared 768-row "factoriser" is added to every bucket during training and
     merged into the buckets at export, so rarely-seen buckets still learn.
 Loss: run D -- (sigmoid(pred/800) - sigmoid(target/800))^2, target = Stockfish cp.
-Schedule: learning rate warms up, then cosine-decays to 1% exactly at --hours.
+Schedule: learning rate warms up, then cosine-decays to 1% exactly at --hours
+(or at --steps, which makes the run independent of hardware speed; the time
+budget is the default and is how the network in engine/weights was trained).
 
 Output (rewritten every time the held-out loss improves):
     nnue_v3.bin   int16 W1 | int16 B1 | int16 W2 | int32 B2, little-endian,
@@ -40,7 +44,7 @@ FAC = NB * 768                  # first factoriser row
 PAD = FAC + 768                 # all-zero padding row
 QA, QB = 510, 4096
 K = 800.0
-VAL_N = 1_000_000
+VAL_N = 1_000_000               # held-out positions (the tail of the data); --val-n to change
 
 
 def bucket_table(nb):
@@ -223,15 +227,28 @@ def main():
     ap.add_argument("--batch", type=int, default=16384)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--eval-min", type=float, default=10.0, help="minutes between held-out checks")
+    ap.add_argument("--steps", type=int, default=0,
+                    help="fixed number of steps instead of --hours; held-out checks every --eval-steps")
+    ap.add_argument("--eval-steps", type=int, default=0, help="steps between held-out checks with --steps")
+    ap.add_argument("--seed", type=int, default=None, help="seed for weights and batches (default: unseeded, as run)")
+    ap.add_argument("--val-n", type=int, default=VAL_N, help="held-out positions")
+    ap.add_argument("--deterministic", action="store_true",
+                    help="CPU, one thread, deterministic kernels: a --steps --seed run repeats bit for bit")
     args = ap.parse_args()
+    val_n = args.val_n
+    if args.seed is not None:
+        torch.manual_seed(args.seed)
+    if args.deterministic:
+        torch.use_deterministic_algorithms(True)
+        torch.set_num_threads(1)
     if os.path.exists("STOP"):
         os.remove("STOP")
 
-    dev = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    dev = torch.device("cuda" if torch.cuda.is_available() and not args.deterministic else "cpu")
     print(f"device  : {torch.cuda.get_device_name(0) if dev.type == 'cuda' else 'CPU'}")
     board, stm, score = load_data()
-    n_train = len(score) - VAL_N
-    assert n_train > 0, "need more than 1M positions"
+    n_train = len(score) - val_n
+    assert n_train > 0, f"need more than {val_n:,} positions (--val-n)"
     gpu_data = False
     if dev.type == "cuda":
         free = torch.cuda.mem_get_info()[0]
@@ -241,7 +258,7 @@ def main():
     ts = torch.from_numpy(stm).to(ddev)
     ty = torch.from_numpy(score).to(ddev)
     del board, stm, score
-    print(f"storage : training data on {'GPU' if gpu_data else 'CPU'}; {n_train:,} train, {VAL_N:,} held out")
+    print(f"storage : training data on {'GPU' if gpu_data else 'CPU'}; {n_train:,} train, {val_n:,} held out")
     vb, vs, vy = tb[n_train:].to(dev), ts[n_train:].to(dev), ty[n_train:].to(dev)
 
     table8 = torch.from_numpy(bucket_table(8)).to(dev)
@@ -264,10 +281,11 @@ def main():
     best = float("inf")
     step = seen = 0
     lr = 0.0
-    print(f"run     : {args.hours:.1f} h, batch {args.batch}, lr {args.lr}, K {K:.0f}, "
+    length = f"{args.steps:,} steps" if args.steps else f"{args.hours:.1f} h"
+    print(f"run     : {length}, batch {args.batch}, lr {args.lr}, K {K:.0f}, "
           f"{NB} buckets x 768 -> {H}, {NHEAD} heads")
     while True:
-        frac = (time.time() - t0) / budget
+        frac = step / args.steps if args.steps else (time.time() - t0) / budget
         done = frac >= 1.0 or os.path.exists("STOP")
         if not done:
             lr = args.lr * min(1.0, frac / 0.02) * (0.01 + 0.99 * 0.5 * (1 + math.cos(math.pi * frac)))
@@ -290,7 +308,11 @@ def main():
             last_log = now
             print(f"  {(now - t0) / 60:6.1f} min  step {step:>8,}  seen {seen / 1e6:8.1f}M  "
                   f"({seen / (now - t0) / 1e3:,.0f}k pos/s)  lr {lr:.2e}  batch loss {loss.item():.6f}", flush=True)
-        if done or now - last_eval >= args.eval_min * 60:
+        if args.steps:
+            check = args.eval_steps > 0 and step > 0 and step % args.eval_steps == 0 and not done
+        else:
+            check = now - last_eval >= args.eval_min * 60
+        if done or check:
             last_eval = now
             net.eval()
             l3, m3, _ = evaluate(net, vb, vs, vy, table8, NB, True)
@@ -321,7 +343,7 @@ def main():
         a = float((p3[m] * p2[m]).sum() / (p3[m] * p3[m]).sum())
         print(f"engine scale   : NN2 runs at 61/100; NN3 at {round(61 * a)}/100 gives the same cp scale")
     # integer check, exactly as the engine will compute it
-    idx = torch.arange(0, VAL_N, VAL_N // 500)
+    idx = torch.arange(0, val_n, max(1, val_n // 500))
     vbn, vsn = vb[idx.to(dev)].cpu().numpy(), vs[idx.to(dev)].cpu().numpy()
     qi = np.array([eval_int(w1, b1, w2, b2, bucket_table(8), NB, vbn[i], int(vsn[i])) for i in range(len(idx))])
     qf = p3[idx.to(dev)].cpu().numpy()

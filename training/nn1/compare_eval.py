@@ -17,15 +17,26 @@ exactly the positions the network trained against and needs no re-parse:
 
     index = colour * 384 + (piece_type - 1) * 64 + square
 
-Needs numpy, numba and numbav7.py in the same folder.
+Needs numpy and numba. Run from anywhere; it reads the parser's NNUE_*.npy files
+from the current folder.
+
+Originally this imported numbav7.py. It now uses the engine in engine/ with both
+network flags off, which tests/test_versions.py shows is version 7 exactly, and
+the first network's weights from engine/weights/nnue_v1.bin, which are the
+weights this script originally read from nnue_w1/b1/w2/b2.npy.
 """
 
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 
-import numbav7 as V7
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+import engine.config as _config  # noqa: E402
+
+_config.USE_NNUE = _config.USE_NNUE_V2 = False   # before the engine compiles: version 7's evaluation
+from engine import agent as V7  # noqa: E402
 
 SAMPLE = 200_000
 PAD_INDEX = 769
@@ -96,12 +107,11 @@ def main() -> None:
     sides = np.asarray(stm[val_idx], dtype=np.int64)
     target = np.asarray(cps[val_idx], dtype=np.float64)
 
-    w1 = np.load("nnue_w1.npy")
-    b1 = np.load("nnue_b1.npy")
-    w2 = np.load("nnue_w2.npy")
-    b2 = np.load("nnue_b2.npy")
+    # the first network as the engine loads it (int16, checked by CRC at import)
+    w1, b1, w2, b2 = V7.NNUE_W1, V7.NNUE_B1, V7.NNUE_W2, V7.NNUE_B2
+    assert int(V7.NNUE_OK[0]) == 1, "first network did not load"
 
-    print("scoring... (numbav7 compiles first, about a minute)")
+    print("scoring...")
     started = time.time()
 
     mat = np.empty(len(rows))
