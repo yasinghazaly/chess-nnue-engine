@@ -1,0 +1,60 @@
+{
+ "games": 164,
+ "scored": 164,
+ "wins": 69,
+ "draws": 37,
+ "losses": 58,
+ "pairs": 82,
+ "llr": 0.44,
+ "bounds": [
+  -2.944,
+  2.944
+ ],
+ "elo0": 0.0,
+ "elo1": 35.0,
+ "verdict": "stopped at 164 games, before a verdict or the cap",
+ "score": 0.5335,
+ "score_95": [
+  0.4662,
+  0.6009
+ ],
+ "elo": 23.3,
+ "elo_95": [
+  -23.5,
+  71.1
+ ],
+ "pair_score": 0.5335,
+ "pair_score_95": [
+  0.4724,
+  0.5947
+ ],
+ "terminations": {
+  "checkmate": 98,
+  "threefold_repetition": 29,
+  "flag": 29,
+  "insufficient_material": 1,
+  "fifty_moves": 7
+ },
+ "failures": {
+  "A": 11,
+  "B": 18
+ },
+ "match": "v8 vs v7",
+ "A": "v8",
+ "B": "v7",
+ "hashes": {
+  "v8": "37855837618368f5a166b72ec964a7a35e2b94dcc5cb51ce7c6c86f6c751d09f",
+  "v7": "6c69942bd036ba1aca7431bf8b900d8a96caa2a1a78d701b28bb8d7f963cf8b3"
+ },
+ "settings": {
+  "base_ms": 10000,
+  "increment_ms": 100,
+  "max_games": 400,
+  "min_games": 40,
+  "alpha": 0.05,
+  "beta": 0.05,
+  "openings": 48,
+  "workers": 6
+ },
+ "note": "Stopped by hand at 164 games (decision recorded 25 Oct). settings.workers corrected from 8 to 6: a later --report call had overwritten it."
+}

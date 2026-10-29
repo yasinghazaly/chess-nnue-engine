@@ -1,0 +1,45 @@
+{"index": 0, "opening": "English Opening", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 96.6}
+{"index": 4, "opening": "Petroff Defence", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 102.9}
+{"index": 2, "opening": "French Winawer", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 106.8}
+{"index": 1, "opening": "English Opening", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "flag", "a_score": 1.0, "seconds": 113.8}
+{"index": 5, "opening": "Petroff Defence", "a_white": false, "white": "v7", "black": "v9", "result": "draw", "termination": "threefold_repetition", "a_score": 0.5, "seconds": 118.7}
+{"index": 3, "opening": "French Winawer", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "flag", "a_score": 1.0, "seconds": 118.7}
+{"index": 7, "opening": "Scotch Game", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 126.3}
+{"index": 6, "opening": "Scotch Game", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "flag", "a_score": 1.0, "seconds": 136.0}
+{"index": 11, "opening": "French Classical", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 117.4}
+{"index": 8, "opening": "Grunfeld Defence", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 133.7}
+{"index": 9, "opening": "Grunfeld Defence", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "flag", "a_score": 1.0, "seconds": 133.2}
+{"index": 10, "opening": "French Classical", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "flag", "a_score": 1.0, "seconds": 131.0}
+{"index": 13, "opening": "Sicilian Closed", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 92.3}
+{"index": 14, "opening": "Sicilian Sveshnikov", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 91.8}
+{"index": 16, "opening": "Ruy Lopez, Closed", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 83.0}
+{"index": 12, "opening": "Sicilian Closed", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "flag", "a_score": 1.0, "seconds": 101.8}
+{"index": 17, "opening": "Ruy Lopez, Closed", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 93.2}
+{"index": 15, "opening": "Sicilian Sveshnikov", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 103.1}
+{"index": 20, "opening": "Italian, Giuoco Piano", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 83.2}
+{"index": 18, "opening": "Ruy Lopez, Berlin", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 98.6}
+{"index": 19, "opening": "Ruy Lopez, Berlin", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 101.3}
+{"index": 21, "opening": "Italian, Giuoco Piano", "a_white": false, "white": "v7", "black": "v9", "result": "white", "termination": "checkmate", "a_score": 0.0, "seconds": 100.7}
+{"index": 22, "opening": "Two Knights", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 88.9}
+{"index": 23, "opening": "Two Knights", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "flag", "a_score": 1.0, "seconds": 104.6}
+{"index": 24, "opening": "Scotch", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 99.4}
+{"index": 25, "opening": "Scotch", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 91.2}
+{"index": 26, "opening": "Four Knights", "a_white": true, "white": "v9", "black": "v7", "result": "draw", "termination": "threefold_repetition", "a_score": 0.5, "seconds": 98.8}
+{"index": 28, "opening": "Petroff", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "flag", "a_score": 1.0, "seconds": 100.9}
+{"index": 29, "opening": "Petroff", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 89.0}
+{"index": 27, "opening": "Four Knights", "a_white": false, "white": "v7", "black": "v9", "result": "draw", "termination": "insufficient_material", "a_score": 0.5, "seconds": 112.0}
+{"index": 30, "opening": "Vienna", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 102.1}
+{"index": 31, "opening": "Vienna", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 107.8}
+{"index": 32, "opening": "Sicilian, Najdorf", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 98.8}
+{"index": 34, "opening": "Sicilian, Classical", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 91.9}
+{"index": 33, "opening": "Sicilian, Najdorf", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 99.6}
+{"index": 35, "opening": "Sicilian, Classical", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 98.0}
+{"index": 36, "opening": "Sicilian, Taimanov", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 91.7}
+{"index": 37, "opening": "Sicilian, Taimanov", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 88.6}
+{"index": 38, "opening": "Sicilian, Kan", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 85.1}
+{"index": 39, "opening": "Sicilian, Kan", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 88.8}
+{"index": 40, "opening": "Sicilian, Alapin", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 101.5}
+{"index": 41, "opening": "Sicilian, Alapin", "a_white": false, "white": "v7", "black": "v9", "result": "black", "termination": "checkmate", "a_score": 1.0, "seconds": 101.4}
+{"index": 42, "opening": "Sicilian, Rossolimo", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 84.8}
+{"index": 44, "opening": "French, Classical", "a_white": true, "white": "v9", "black": "v7", "result": "white", "termination": "checkmate", "a_score": 1.0, "seconds": 84.4}
+{"index": 43, "opening": "Sicilian, Rossolimo", "a_white": false, "white": "v7", "black": "v9", "result": "white", "termination": "checkmate", "a_score": 0.0, "seconds": 95.0}

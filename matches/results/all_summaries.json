@@ -1,0 +1,293 @@
+[
+ {
+  "games": 45,
+  "scored": 45,
+  "wins": 40,
+  "draws": 3,
+  "losses": 2,
+  "pairs": 22,
+  "llr": 14.267,
+  "bounds": [
+   -2.944,
+   2.944
+  ],
+  "elo0": 0.0,
+  "elo1": 35.0,
+  "verdict": "H1 accepted: A stronger than B (about +35 Elo or more)",
+  "score": 0.9222,
+  "score_95": [
+   0.8529,
+   0.9916
+  ],
+  "elo": 429.6,
+  "elo_95": [
+   305.3,
+   827.9
+  ],
+  "pair_score": 0.9205,
+  "pair_score_95": [
+   0.8456,
+   0.9953
+  ],
+  "terminations": {
+   "checkmate": 34,
+   "flag": 8,
+   "threefold_repetition": 2,
+   "insufficient_material": 1
+  },
+  "failures": {
+   "A": 0,
+   "B": 8
+  },
+  "match": "v9 vs v7",
+  "A": "v9",
+  "B": "v7",
+  "hashes": {
+   "v9": "ada2831be583bca097696f6548f8f7aad31387bbef1ae118f746d69e7488883c",
+   "v7": "6c69942bd036ba1aca7431bf8b900d8a96caa2a1a78d701b28bb8d7f963cf8b3"
+  },
+  "settings": {
+   "base_ms": 10000,
+   "increment_ms": 100,
+   "max_games": 400,
+   "min_games": 40,
+   "alpha": 0.05,
+   "beta": 0.05,
+   "openings": 48,
+   "workers": 6
+  }
+ },
+ {
+  "games": 164,
+  "scored": 164,
+  "wins": 69,
+  "draws": 37,
+  "losses": 58,
+  "pairs": 82,
+  "llr": 0.44,
+  "bounds": [
+   -2.944,
+   2.944
+  ],
+  "elo0": 0.0,
+  "elo1": 35.0,
+  "verdict": "stopped at 164 games, before a verdict or the cap",
+  "score": 0.5335,
+  "score_95": [
+   0.4662,
+   0.6009
+  ],
+  "elo": 23.3,
+  "elo_95": [
+   -23.5,
+   71.1
+  ],
+  "pair_score": 0.5335,
+  "pair_score_95": [
+   0.4724,
+   0.5947
+  ],
+  "terminations": {
+   "checkmate": 98,
+   "threefold_repetition": 29,
+   "flag": 29,
+   "insufficient_material": 1,
+   "fifty_moves": 7
+  },
+  "failures": {
+   "A": 11,
+   "B": 18
+  },
+  "match": "v8 vs v7",
+  "A": "v8",
+  "B": "v7",
+  "hashes": {
+   "v8": "37855837618368f5a166b72ec964a7a35e2b94dcc5cb51ce7c6c86f6c751d09f",
+   "v7": "6c69942bd036ba1aca7431bf8b900d8a96caa2a1a78d701b28bb8d7f963cf8b3"
+  },
+  "settings": {
+   "base_ms": 10000,
+   "increment_ms": 100,
+   "max_games": 400,
+   "min_games": 40,
+   "alpha": 0.05,
+   "beta": 0.05,
+   "openings": 48,
+   "workers": 6
+  },
+  "note": "Stopped by hand at 164 games (decision recorded 25 Oct). settings.workers corrected from 8 to 6: a later --report call had overwritten it."
+ },
+ {
+  "games": 45,
+  "scored": 45,
+  "wins": 36,
+  "draws": 6,
+  "losses": 3,
+  "pairs": 22,
+  "llr": 11.489,
+  "bounds": [
+   -2.944,
+   2.944
+  ],
+  "elo0": 0.0,
+  "elo1": 35.0,
+  "verdict": "H1 accepted: A stronger than B (about +35 Elo or more)",
+  "score": 0.8667,
+  "score_95": [
+   0.7819,
+   0.9514
+  ],
+  "elo": 325.2,
+  "elo_95": [
+   221.8,
+   516.7
+  ],
+  "pair_score": 0.8636,
+  "pair_score_95": [
+   0.7865,
+   0.9408
+  ],
+  "terminations": {
+   "checkmate": 29,
+   "threefold_repetition": 6,
+   "flag": 10
+  },
+  "failures": {
+   "A": 2,
+   "B": 8
+  },
+  "match": "v10 vs v7",
+  "A": "v10",
+  "B": "v7",
+  "hashes": {
+   "v10": "37a78b384e05410de12cf64ccaeff6824961c0862c30422f15135e5c6a87e7c3",
+   "v7": "6c69942bd036ba1aca7431bf8b900d8a96caa2a1a78d701b28bb8d7f963cf8b3"
+  },
+  "settings": {
+   "base_ms": 10000,
+   "increment_ms": 100,
+   "max_games": 400,
+   "min_games": 40,
+   "alpha": 0.05,
+   "beta": 0.05,
+   "openings": 48,
+   "workers": 6
+  }
+ },
+ {
+  "games": 45,
+  "scored": 45,
+  "wins": 28,
+  "draws": 14,
+  "losses": 3,
+  "pairs": 22,
+  "llr": 7.918,
+  "bounds": [
+   -2.944,
+   2.944
+  ],
+  "elo0": 0.0,
+  "elo1": 35.0,
+  "verdict": "H1 accepted: A stronger than B (about +35 Elo or more)",
+  "score": 0.7778,
+  "score_95": [
+   0.6867,
+   0.8689
+  ],
+  "elo": 217.6,
+  "elo_95": [
+   136.3,
+   328.5
+  ],
+  "pair_score": 0.7955,
+  "pair_score_95": [
+   0.7124,
+   0.8785
+  ],
+  "terminations": {
+   "checkmate": 20,
+   "threefold_repetition": 14,
+   "flag": 11
+  },
+  "failures": {
+   "A": 3,
+   "B": 8
+  },
+  "match": "v9 vs v8",
+  "A": "v9",
+  "B": "v8",
+  "hashes": {
+   "v9": "ada2831be583bca097696f6548f8f7aad31387bbef1ae118f746d69e7488883c",
+   "v8": "37855837618368f5a166b72ec964a7a35e2b94dcc5cb51ce7c6c86f6c751d09f"
+  },
+  "settings": {
+   "base_ms": 10000,
+   "increment_ms": 100,
+   "max_games": 400,
+   "min_games": 40,
+   "alpha": 0.05,
+   "beta": 0.05,
+   "openings": 48,
+   "workers": 6
+  }
+ },
+ {
+  "games": 119,
+  "scored": 119,
+  "wins": 34,
+  "draws": 31,
+  "losses": 54,
+  "pairs": 59,
+  "llr": -3.367,
+  "bounds": [
+   -2.944,
+   2.944
+  ],
+  "elo0": 0.0,
+  "elo1": 35.0,
+  "verdict": "H0 accepted: A not stronger than B (about +0 Elo or less); see the interval for which way",
+  "score": 0.416,
+  "score_95": [
+   0.3399,
+   0.4921
+  ],
+  "elo": -59.0,
+  "elo_95": [
+   -115.3,
+   -5.5
+  ],
+  "pair_score": 0.4153,
+  "pair_score_95": [
+   0.3353,
+   0.4953
+  ],
+  "terminations": {
+   "checkmate": 44,
+   "threefold_repetition": 23,
+   "flag": 44,
+   "fifty_moves": 5,
+   "insufficient_material": 3
+  },
+  "failures": {
+   "A": 24,
+   "B": 20
+  },
+  "match": "v9 vs v10",
+  "A": "v9",
+  "B": "v10",
+  "hashes": {
+   "v9": "ada2831be583bca097696f6548f8f7aad31387bbef1ae118f746d69e7488883c",
+   "v10": "37a78b384e05410de12cf64ccaeff6824961c0862c30422f15135e5c6a87e7c3"
+  },
+  "settings": {
+   "base_ms": 10000,
+   "increment_ms": 100,
+   "max_games": 400,
+   "min_games": 40,
+   "alpha": 0.05,
+   "beta": 0.05,
+   "openings": 48,
+   "workers": 6
+  }
+ }
+]

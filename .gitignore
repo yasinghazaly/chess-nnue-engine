@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Numba cache
+*.nbi
+*.nbc
+
+# Training data and shards (never committed)
+*.zst
+*.npz
+!training/nn2/bench_v2.npz
+*.npy
+data/*
+!data/sample/
+!data/sample/*.npz
+
+# Checkpoints and build outputs
+*.pt
+checkpoints/
+build/
+submission.zip
+
+# Unprocessed originals (may contain private details)
+raw/
+
+# Editor and OS
+.vscode/
+.DS_Store
+Thumbs.db

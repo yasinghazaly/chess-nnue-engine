@@ -1,0 +1,57 @@
+{
+ "games": 45,
+ "scored": 45,
+ "wins": 36,
+ "draws": 6,
+ "losses": 3,
+ "pairs": 22,
+ "llr": 11.489,
+ "bounds": [
+  -2.944,
+  2.944
+ ],
+ "elo0": 0.0,
+ "elo1": 35.0,
+ "verdict": "H1 accepted: A stronger than B (about +35 Elo or more)",
+ "score": 0.8667,
+ "score_95": [
+  0.7819,
+  0.9514
+ ],
+ "elo": 325.2,
+ "elo_95": [
+  221.8,
+  516.7
+ ],
+ "pair_score": 0.8636,
+ "pair_score_95": [
+  0.7865,
+  0.9408
+ ],
+ "terminations": {
+  "checkmate": 29,
+  "threefold_repetition": 6,
+  "flag": 10
+ },
+ "failures": {
+  "A": 2,
+  "B": 8
+ },
+ "match": "v10 vs v7",
+ "A": "v10",
+ "B": "v7",
+ "hashes": {
+  "v10": "37a78b384e05410de12cf64ccaeff6824961c0862c30422f15135e5c6a87e7c3",
+  "v7": "6c69942bd036ba1aca7431bf8b900d8a96caa2a1a78d701b28bb8d7f963cf8b3"
+ },
+ "settings": {
+  "base_ms": 10000,
+  "increment_ms": 100,
+  "max_games": 400,
+  "min_games": 40,
+  "alpha": 0.05,
+  "beta": 0.05,
+  "openings": 48,
+  "workers": 6
+ }
+}
