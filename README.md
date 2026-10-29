@@ -68,7 +68,7 @@ suspected:
    barely distinguishes +700 from +1800.
 
 [`training/nn2/sweep_v2.py`](training/nn2/sweep_v2.py) tests both in a 2 × 2
-design, with the same seed and length for every run:
+design, with the same seed and the same time budget (8 minutes) for every run:
 
 | Run | Drop clamped labels unless the winner is ≥ 3 pawns ahead | Loss scale K |
 |---|---|---|
@@ -158,7 +158,7 @@ second. The v10–v9 match was run as "v9 vs v10" (the table shows it from v10's
 side), and v8–v7 was stopped by hand at 164 games, when the two looked too
 close to separate within the game budget.
 
-No game crashed. 102 of the 418 games ended on time; in 84 of those the side that
+No game crashed. 102 of the 418 games ended with a player running out of time; in 84 of those the side that
 ran out of time was already at least two pawns down. With those games removed,
 every comparison points the same way (v10 against v9: 60.7 % over 75 games).
 
