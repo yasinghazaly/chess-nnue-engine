@@ -65,8 +65,8 @@ its agreement with Stockfish on positions from the engine's own games peaked aft
 two minutes and then fell below the hand-written evaluation. Two causes were
 suspected:
 
-1. **Mating-attack labels.** About 34.8 M labels sat at the ±2000 clamp, 31 M of
-   them mates, many with roughly equal material. A static evaluation cannot see a
+1. **Mating-attack labels.** Of the 282 M positions parsed, about 34.8 M labels
+   sat at the ±2000 clamp, 31 M of them mates, many with roughly equal material. A static evaluation cannot see a
    forced mate; fitting one teaches the network to call any exposed king lost.
 2. **Loss saturation.** σ(x / 400) is almost flat beyond ±800 cp, so the loss
    barely distinguishes +700 from +1800.
@@ -205,7 +205,7 @@ modules and embeds the weights.
 |---|---|---|
 | 7 | hand-written | baseline for the networks |
 | 8 | first network (769 → 512 → 1), [`training/nn1/`](training/nn1/) | trained on 15,859,917 positions without the capture filter; scored below version 7 on the benchmark |
-| 9 | second network (4 buckets, 256 hidden), [`training/nn2/`](training/nn2/) | the network of the 2 × 2 experiment and the gate |
+| 9 | second network (4 buckets, 256 hidden), [`training/nn2/`](training/nn2/) | the network of the 2 × 2 experiment and the gate; its parser kept 282,396,442 positions in 141 files, and training loaded the first 100, 200,722,202 positions (working log) |
 | **10** | **third network (above), [`training/nn3/`](training/nn3/)** | **this repository**; the search is version 9's, unchanged |
 
 Ship rules were fixed before testing: a new network version ships at 55 % or
