@@ -48,10 +48,14 @@ twice the king buckets and a wider hidden layer. The weights were trained in thi
 project. Trainer: [`training/nn3/train_v3.py`](training/nn3/train_v3.py).
 Weights: [`engine/weights/nnue_v3.bin`](engine/weights/nnue_v3.bin).
 
-On the trainer's held-out positions, after 10 minutes of training the network
-reached a loss of 0.003024 and a mean error of 112.8 cp, against 0.003264 and
-115.8 cp for the second network on the same positions; the mean error was
-110.9 cp at about 27 minutes of the 90-minute run (working log).
+On the trainer's held-out positions (the last 1,000,000 of the stream), after 10
+minutes of training the network reached a loss of 0.003024 and a mean error of
+112.8 cp, against 0.003264 and 115.8 cp for the second network on the same
+positions. The last figure recorded during the 90-minute run was a mean error of
+110.9 cp, reported after about 27 minutes (working log). The figures at the end of
+the run were not recorded, and the training log is not in this repository. The
+trainer writes the weights file only when the held-out loss improves, so the loss
+of the weights here is at most 0.003024; its exact value is not known.
 
 ### 3. Why lower training loss gave a worse evaluation
 
