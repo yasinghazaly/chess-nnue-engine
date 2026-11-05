@@ -265,6 +265,10 @@ for bit on one CPU thread.
   depended on the hardware; a rerun with the default settings will not repeat them
   step for step. Fixed-length, deterministic runs are available for new training
   (`--steps`, `--deterministic`).
+- **Not included:** the trainers' float weights (the second network's float
+  `nnue_v2.bin` and the third network's `nnue_v3.pt`), the training data, the
+  training logs and the sweep's selection set (`select_v2.npz`). Only the int16
+  weights the engines run are here.
 - Several figures above come from the working log kept at the time and are marked
   as such; they have not been re-run here.
 
