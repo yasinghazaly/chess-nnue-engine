@@ -127,3 +127,12 @@ def test_regate_matches_version_9_second_network():
     net = REGATE.SECOND()
     for row in REF["second_network_v9"]:
         assert net.eval_stm(row["fen"]) == row["nn2_raw"]
+
+
+def test_regate_side_to_move_bonus_matches_recorded_gate_run():
+    """The side-to-move bonus regate.py reports for the second network is the one the
+    gate printed when it was run on that network: median +49, mean +59, 95th
+    percentile +144. It is reported, not gated (README, section 4)."""
+    bench = np.load(Path(__file__).parents[1] / "training" / "nn2" / "bench_v2.npz")
+    t = REGATE.side_to_move_bonus(REGATE.SECOND(), [str(f) for f in bench["fen"]])
+    assert (round(np.median(t)), round(t.mean()), round(np.percentile(t, 95))) == (49, 59, 144)

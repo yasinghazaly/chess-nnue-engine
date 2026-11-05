@@ -126,6 +126,16 @@ weights of both bucketed networks: the second network
 The quantisation check needs the trainer's float weights, which are not in this
 repository. The third network passes every check that can be run here.
 
+The gate has seven criteria: the two correlation thresholds and the checks in the
+table above, where `gate_v2.py` counts the int16 range and the quantisation error
+as one criterion. It also prints the side-to-move bonus (a
+position's score with each side to move, added) but does not gate on it, because
+Stockfish's own bonus on these positions has a median of +69 cp, so there is no
+small "correct" value. The median is +49 cp for the second network, the figure
+recorded when the gate was first run on it, and +62 cp for the third. An earlier
+draft of the gate had an eighth criterion (median bonus 0 to 40 cp); it was
+removed before that run, and the verdict recorded then lists seven.
+
 The second network failed one check, and the failure was overridden before
 version 9 was built. The analysis recorded in the working log at the time: the
 hand-written evaluation it was replacing scored −128 on the same position and
@@ -208,7 +218,7 @@ Python 3.13. From the repository root:
 
 ```bash
 pip install -r requirements.txt
-python -m pytest tests -v                      # 87 tests, about three minutes
+python -m pytest tests -v                      # 88 tests, about three minutes
 python training/regate.py                      # the gate tables above
 python scripts/build_submission.py             # writes build/agent.py
 ```

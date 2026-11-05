@@ -19,6 +19,13 @@ gate_v2.py reads the trainer's float weights, which are not in this repository,
 so its quantisation-error criterion (|int - float| <= 10 cp) is reported as not
 checkable. Every other criterion and threshold is gate_v2.py's.
 
+The gate has seven criteria. Like gate_v2.py, this script also prints the
+side-to-move bonus (a position's score with each side to move, added), but does
+not gate on it: Stockfish's own bonus on these positions has a median of +69 cp,
+so there is no small "correct" value. An earlier draft of gate_v2.py had an
+eighth criterion (median bonus 0 to 40 cp); it was removed before the gate was
+run on the second network.
+
 Inputs
 ------
 training/nn2/bench_v2.npz, 3,071 positions from the engine's own games:
@@ -122,6 +129,27 @@ def material(fen: str) -> int:
     return sum(VAL[p.piece_type] * (1 if p.color else -1) for p in chess.Board(fen).piece_map().values())
 
 
+def other_side_to_move(fen: str) -> str:
+    """Same placement, the other side to move, no en passant square."""
+    parts = fen.split()
+    parts[1] = "b" if parts[1] == "w" else "w"
+    parts[3] = "-"
+    return " ".join(parts)
+
+
+def either_king_attacked(fen: str) -> bool:
+    board = chess.Board(fen)
+    return any(board.is_attacked_by(not c, board.king(c)) for c in (chess.WHITE, chess.BLACK))
+
+
+def side_to_move_bonus(net: Net, fens: list[str]) -> np.ndarray:
+    """Score with the side to move plus score with the other side to move, both from
+    the mover's point of view; positions where either king is attacked are skipped.
+    The same measurement as gate_v2.py's "side-to-move bonus"."""
+    return np.array([net.eval_stm(f) + net.eval_stm(other_side_to_move(f))
+                     for f in fens if not either_king_attacked(f)], float)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--bench", default=str(ROOT / "training" / "nn2" / "bench_v2.npz"))
@@ -187,6 +215,9 @@ def main() -> int:
             print(f"  [{'PASS' if ok else 'FAIL'}] {name:50s} {val}")
         print(f"  [ -- ] {'quantisation error <= 10 cp':50s} not checkable: float weights not in this repository")
         print(f"  {sum(ok for _, ok, _ in checks)} of {len(checks)} checkable criteria passed")
+        tempo = side_to_move_bonus(net, fens)
+        print(f"  reported, not gated: side-to-move bonus median {np.median(tempo):+.0f} cp, mean {tempo.mean():+.0f}, "
+              f"95th pct {np.percentile(tempo, 95):+.0f} over {len(tempo)} positions (Stockfish: median +69)")
     return 0
 
 
