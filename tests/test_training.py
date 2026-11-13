@@ -82,6 +82,39 @@ def test_third_network_pipeline(sample, tmp_path):
     assert net.eval_stm(fen) == net.eval_stm(chess.Board(fen).mirror().fen())
 
 
+# 34 pieces: the start position plus two white pawns on d3 and e3. The Lichess
+# database holds analysis-board setups like this; the parser keeps them (it only
+# checks for one king each), and the trainer that produced the shipped weights
+# dropped them on loading (13,604 in the real data, training/nn3/training_log.txt).
+OVER_32 = "rnbqkbnr/pppppppp/8/8/8/3PP3/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+
+def test_third_network_trainer_drops_boards_over_32_pieces(tmp_path):
+    sys.path.insert(0, str(ROOT / "training" / "nn3"))
+    import train_v3
+
+    # feature indexing alone must not fail on such a board
+    codes = np.zeros(64, np.uint8)
+    for sq, piece in chess.Board(OVER_32).piece_map().items():
+        codes[sq] = piece.piece_type + (0 if piece.color else 6)
+    packed = (codes[0::2] | (codes[1::2] << 4)).astype(np.uint8)
+    table = torch.from_numpy(train_v3.bucket_table(8))
+    iw, ib, _ = train_v3.make_idx(torch.from_numpy(packed[None]), torch.zeros(1, dtype=torch.uint8),
+                                  table, 8, True)
+    assert iw.shape == ib.shape == (1, 64)
+
+    # and the full pipeline: parse keeps the board, the trainer drops it and runs
+    extra = json.dumps({"fen": OVER_32, "evals": [{"pvs": [{"cp": 30, "line": "g1f3"}], "knodes": 1000, "depth": 30}]})
+    raw = lichess_lines() + (extra + "\n").encode()
+    (tmp_path / "sample.jsonl.zst").write_bytes(zstandard.ZstdCompressor().compress(raw))
+    run([ROOT / "training" / "nn3" / "parse_v3.py", "--file", tmp_path / "sample.jsonl.zst", "--workers", 1],
+        tmp_path)
+    out = run([ROOT / "training" / "nn3" / "train_v3.py", "--steps", 4, "--eval-steps", 2, "--batch", 64,
+               "--val-n", 200, "--seed", 0, "--deterministic"], tmp_path)
+    assert "(1 with >32 pieces dropped)" in out
+    assert "DONE" in out
+
+
 def test_second_network_pipeline(sample, tmp_path):
     out = run([ROOT / "training" / "nn2" / "parse_v2.py", "--input", sample / "sample.jsonl", "--data-dir", "data"],
               tmp_path)

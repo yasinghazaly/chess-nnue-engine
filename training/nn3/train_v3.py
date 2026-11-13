@@ -74,7 +74,7 @@ def make_idx(board, stm, table, nb, factor):
     b = board.long()
     codes = torch.stack((b & 15, b >> 4), dim=2).reshape(B, 64)
     occ = codes > 0
-    dest = torch.where(occ, occ.cumsum(1) - 1, torch.full_like(codes, 32))
+    dest = torch.where(occ, (occ.cumsum(1) - 1).clamp(max=32), torch.full_like(codes, 32))
     sqs = torch.arange(64, device=dev).expand(B, 64)
     sq = torch.zeros(B, 33, dtype=torch.long, device=dev).scatter_(1, dest, sqs)[:, :32]
     c = torch.zeros(B, 33, dtype=torch.long, device=dev).scatter_(1, dest, codes)[:, :32]
@@ -197,12 +197,18 @@ def load_data():
     stm = np.empty(n, np.uint8)
     score = np.empty(n, np.int16)
     o = 0
-    for f, s in zip(files, sizes):
+    dropped = 0
+    for f in files:
         d = np.load(f)
-        board[o:o + s], stm[o:o + s], score[o:o + s] = d["board"], d["stm"], d["score"]
-        o += s
-    print(f"data    : {n:,} positions from {len(files)} shards")
-    return board, stm, score
+        b = d["board"]
+        pieces = ((b & 15) > 0).sum(1) + ((b >> 4) > 0).sum(1)
+        keep = pieces <= 32                      # analysis-board setups can hold more
+        k = int(keep.sum())
+        board[o:o + k], stm[o:o + k], score[o:o + k] = b[keep], d["stm"][keep], d["score"][keep]
+        o += k
+        dropped += len(keep) - k
+    print(f"data    : {o:,} positions from {len(files)} shards ({dropped:,} with >32 pieces dropped)")
+    return board[:o], stm[:o], score[:o]
 
 
 @torch.no_grad()
