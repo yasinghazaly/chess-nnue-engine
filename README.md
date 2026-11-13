@@ -48,14 +48,15 @@ twice the king buckets and a wider hidden layer. The weights were trained in thi
 project. Trainer: [`training/nn3/train_v3.py`](training/nn3/train_v3.py).
 Weights: [`engine/weights/nnue_v3.bin`](engine/weights/nnue_v3.bin).
 
-On the trainer's held-out positions (the last 1,000,000 of the stream), after 10
-minutes of training the network reached a loss of 0.003024 and a mean error of
-112.8 cp, against 0.003264 and 115.8 cp for the second network on the same
-positions. The last figure recorded during the 90-minute run was a mean error of
-110.9 cp, reported after about 27 minutes (working log). The figures at the end of
-the run were not recorded, and the training log is not in this repository. The
-trainer writes the weights file only when the held-out loss improves, so the loss
-of the weights here is at most 0.003024; its exact value is not known.
+On the trainer's held-out positions (the last 1,000,000 of the stream), the loss
+fell at every 10-minute check, from 0.003024 at 10 minutes to 0.002846 when the
+run was stopped by hand at 70.5 minutes (it was set for 1.5 hours). The weights
+here are that final checkpoint: held-out loss 0.002846 and mean error 109.1 cp,
+against 0.003264 and 115.8 cp for the second network on the same positions, a
+12.8 % lower loss. The third network is also larger than the second, so the
+difference is not the effect of the training recipe alone. Training ran at about
+490,000 positions per second on an RTX 4060 Laptop GPU. The trainer's full output
+is in [`training/nn3/training_log.txt`](training/nn3/training_log.txt).
 
 ### 3. Why lower training loss gave a worse evaluation
 
@@ -124,7 +125,10 @@ weights of both bucketed networks: the second network
 | Quantisation error, integer against float | ≤ 10 cp | not checkable here | not checkable here |
 
 The quantisation check needs the trainer's float weights, which are not in this
-repository. The third network passes every check that can be run here.
+repository. The third network passes every check that can be run here. Separately,
+the trainer's own check at the end of its run found the integer network within
+5.0 cp of the float one on 500 held-out positions (a different set from the
+gate's; [`training/nn3/training_log.txt`](training/nn3/training_log.txt)).
 
 The gate has seven criteria: the two correlation thresholds and the checks in the
 table above, where `gate_v2.py` counts the int16 range and the quantisation error
@@ -277,8 +281,9 @@ for bit on one CPU thread.
   (`--steps`, `--deterministic`).
 - **Not included:** the trainers' float weights (the second network's float
   `nnue_v2.bin` and the third network's `nnue_v3.pt`), the training data, the
-  training logs and the sweep's selection set (`select_v2.npz`). Only the int16
-  weights the engines run are here.
+  first and second networks' training logs and the sweep's selection set
+  (`select_v2.npz`). Only the int16 weights the engines run are here. The third
+  network's training output is included.
 - Several figures above come from the working log kept at the time and are marked
   as such; they have not been re-run here.
 

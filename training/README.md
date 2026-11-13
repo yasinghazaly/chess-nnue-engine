@@ -7,7 +7,7 @@ through a different process.
 |---|---|---|---|---|
 | [`nn1/`](nn1/) | 769 → 512 → 1 | version 8; fallback in versions 9 and 10 | download, parse, train, compare with the hand-written evaluation | `download_evals.py`, `parse_evals.py`, `train.py`, `compare_eval.py` |
 | [`nn2/`](nn2/) | 2 × (4 king buckets × 768 → 256), 8 heads | version 9 | parse, train, 2 × 2 sweep, gate | `parse_v2.py`, `train_v2.py`, `sweep_v2.py`, `gate_v2.py`, `bench_v2.npz`, `nnue_v2_int16.bin` |
-| [`nn3/`](nn3/) | 2 × (8 king buckets × 768 → 384), 8 heads | **version 10 (this repository's engine)** | parse, train | `parse_v3.py`, `train_v3.py` |
+| [`nn3/`](nn3/) | 2 × (8 king buckets × 768 → 384), 8 heads | **version 10 (this repository's engine)** | parse, train | `parse_v3.py`, `train_v3.py`, `training_log.txt` |
 | [`regate.py`](regate.py) | second and third | | gate checks on the int16 weights of both | |
 
 Why they differ:
@@ -24,7 +24,9 @@ Why they differ:
 - **nn3** reuses the recipe that won the sweep (run D: clamped labels dropped
   unless the winner is three pawns ahead, K = 800) on a larger network and
   120,888,098 positions. `train_v3.py` writes `nnue_v3.bin` in the engine's format,
-  which the engine loads from `engine/weights/` as is.
+  which the engine loads from `engine/weights/` as is. `training_log.txt` is the
+  trainer's output from the run that produced those weights (stopped by hand at
+  70.5 minutes; final held-out loss 0.002846, mean error 109.1 cp).
 - **`regate.py`** applies `gate_v2.py`'s checks to the int16 weights of both
   bucketed networks. `gate_v2.py` itself reads the trainers' float weights, which
   are not in this repository.

@@ -1,0 +1,94 @@
+device  : NVIDIA GeForce RTX 4060 Laptop GPU
+data    : 120,888,098 positions from 31 shards (13,604 with >32 pieces dropped)
+storage : training data on GPU; 119,888,098 train, 1,000,000 held out
+NN2     : held-out loss 0.003264   MAE 115.8 cp   (the number to beat)
+run     : 1.5 h, batch 16384, lr 0.001, K 800, 8 buckets x 768 -> 384, 8 heads
+     1.0 min  step    1,795  seen     29.4M  (490k pos/s)  lr 5.55e-04  batch loss 0.004296
+     2.0 min  step    3,590  seen     58.8M  (490k pos/s)  lr 9.99e-04  batch loss 0.003509
+     3.0 min  step    5,383  seen     88.2M  (490k pos/s)  lr 9.97e-04  batch loss 0.003310
+     4.0 min  step    7,180  seen    117.6M  (490k pos/s)  lr 9.95e-04  batch loss 0.003033
+     5.0 min  step    8,975  seen    147.0M  (490k pos/s)  lr 9.92e-04  batch loss 0.002927
+     6.0 min  step   10,756  seen    176.2M  (489k pos/s)  lr 9.89e-04  batch loss 0.002764
+     7.0 min  step   12,531  seen    205.3M  (489k pos/s)  lr 9.85e-04  batch loss 0.002614
+     8.0 min  step   14,316  seen    234.6M  (488k pos/s)  lr 9.81e-04  batch loss 0.002728
+     9.0 min  step   16,108  seen    263.9M  (489k pos/s)  lr 9.76e-04  batch loss 0.002694
+  [held-out]   10.0 min  loss 0.003024  MAE 112.8 cp  <- best, saved nnue_v3.bin
+    10.0 min  step   17,900  seen    293.3M  (488k pos/s)  lr 9.70e-04  batch loss 0.002576
+    11.0 min  step   19,682  seen    322.5M  (488k pos/s)  lr 9.64e-04  batch loss 0.002512
+    12.0 min  step   21,444  seen    351.3M  (487k pos/s)  lr 9.57e-04  batch loss 0.002486
+    13.0 min  step   23,217  seen    380.4M  (487k pos/s)  lr 9.50e-04  batch loss 0.002577
+    14.0 min  step   25,003  seen    409.6M  (487k pos/s)  lr 9.42e-04  batch loss 0.002618
+    15.0 min  step   26,773  seen    438.6M  (487k pos/s)  lr 9.34e-04  batch loss 0.002442
+    16.0 min  step   28,561  seen    467.9M  (487k pos/s)  lr 9.25e-04  batch loss 0.002471
+    17.0 min  step   30,355  seen    497.3M  (487k pos/s)  lr 9.15e-04  batch loss 0.002460
+    18.0 min  step   32,151  seen    526.8M  (487k pos/s)  lr 9.05e-04  batch loss 0.002462
+    19.0 min  step   33,932  seen    555.9M  (487k pos/s)  lr 8.95e-04  batch loss 0.002386
+  [held-out]   20.0 min  loss 0.002933  MAE 111.3 cp  <- best, saved nnue_v3.bin
+    20.0 min  step   35,694  seen    584.8M  (487k pos/s)  lr 8.84e-04  batch loss 0.002485
+    21.0 min  step   37,484  seen    614.1M  (487k pos/s)  lr 8.73e-04  batch loss 0.002432
+    22.0 min  step   39,274  seen    643.5M  (487k pos/s)  lr 8.61e-04  batch loss 0.002376
+    23.0 min  step   41,066  seen    672.8M  (487k pos/s)  lr 8.49e-04  batch loss 0.002399
+    24.0 min  step   42,858  seen    702.2M  (487k pos/s)  lr 8.36e-04  batch loss 0.002431
+    25.0 min  step   44,635  seen    731.3M  (487k pos/s)  lr 8.23e-04  batch loss 0.002402
+    26.0 min  step   46,415  seen    760.5M  (487k pos/s)  lr 8.09e-04  batch loss 0.002341
+    27.0 min  step   48,207  seen    789.8M  (487k pos/s)  lr 7.96e-04  batch loss 0.002453
+    28.0 min  step   49,979  seen    818.9M  (487k pos/s)  lr 7.82e-04  batch loss 0.002391
+    29.0 min  step   51,764  seen    848.1M  (487k pos/s)  lr 7.67e-04  batch loss 0.002389
+  [held-out]   30.0 min  loss 0.002912  MAE 110.9 cp  <- best, saved nnue_v3.bin
+    30.0 min  step   53,526  seen    877.0M  (487k pos/s)  lr 7.52e-04  batch loss 0.002263
+    31.0 min  step   55,319  seen    906.3M  (487k pos/s)  lr 7.37e-04  batch loss 0.002305
+    32.0 min  step   57,112  seen    935.7M  (487k pos/s)  lr 7.22e-04  batch loss 0.002259
+    33.0 min  step   58,904  seen    965.1M  (487k pos/s)  lr 7.06e-04  batch loss 0.002302
+    34.0 min  step   60,696  seen    994.4M  (487k pos/s)  lr 6.90e-04  batch loss 0.002284
+    35.0 min  step   62,489  seen   1023.8M  (487k pos/s)  lr 6.74e-04  batch loss 0.002358
+    36.0 min  step   64,282  seen   1053.2M  (487k pos/s)  lr 6.58e-04  batch loss 0.002337
+    37.0 min  step   66,073  seen   1082.5M  (487k pos/s)  lr 6.41e-04  batch loss 0.002211
+    38.0 min  step   67,860  seen   1111.8M  (487k pos/s)  lr 6.24e-04  batch loss 0.002345
+    39.0 min  step   69,648  seen   1141.1M  (487k pos/s)  lr 6.08e-04  batch loss 0.002325
+  [held-out]   40.0 min  loss 0.002890  MAE 110.4 cp  <- best, saved nnue_v3.bin
+    40.0 min  step   71,412  seen   1170.0M  (487k pos/s)  lr 5.91e-04  batch loss 0.002301
+    41.0 min  step   73,193  seen   1199.2M  (487k pos/s)  lr 5.73e-04  batch loss 0.002505
+    42.0 min  step   74,979  seen   1228.5M  (487k pos/s)  lr 5.56e-04  batch loss 0.002311
+    43.0 min  step   76,771  seen   1257.8M  (487k pos/s)  lr 5.39e-04  batch loss 0.002354
+    44.0 min  step   78,527  seen   1286.6M  (487k pos/s)  lr 5.22e-04  batch loss 0.002214
+    45.0 min  step   80,314  seen   1315.9M  (487k pos/s)  lr 5.05e-04  batch loss 0.002285
+    46.0 min  step   82,107  seen   1345.2M  (487k pos/s)  lr 4.87e-04  batch loss 0.002246
+    47.0 min  step   83,899  seen   1374.6M  (487k pos/s)  lr 4.70e-04  batch loss 0.002271
+    48.0 min  step   85,688  seen   1403.9M  (487k pos/s)  lr 4.53e-04  batch loss 0.002232
+    49.0 min  step   87,477  seen   1433.2M  (487k pos/s)  lr 4.36e-04  batch loss 0.002261
+  [held-out]   50.0 min  loss 0.002874  MAE 109.8 cp  <- best, saved nnue_v3.bin
+    50.0 min  step   89,239  seen   1462.1M  (487k pos/s)  lr 4.19e-04  batch loss 0.002193
+    51.0 min  step   91,030  seen   1491.4M  (487k pos/s)  lr 4.02e-04  batch loss 0.002185
+    52.0 min  step   92,823  seen   1520.8M  (487k pos/s)  lr 3.85e-04  batch loss 0.002151
+    53.0 min  step   94,614  seen   1550.2M  (487k pos/s)  lr 3.68e-04  batch loss 0.002211
+    54.0 min  step   96,407  seen   1579.5M  (487k pos/s)  lr 3.52e-04  batch loss 0.002200
+    55.0 min  step   98,184  seen   1608.6M  (487k pos/s)  lr 3.35e-04  batch loss 0.002262
+    56.0 min  step   99,977  seen   1638.0M  (487k pos/s)  lr 3.19e-04  batch loss 0.002271
+    57.0 min  step  101,770  seen   1667.4M  (487k pos/s)  lr 3.03e-04  batch loss 0.002295
+    58.0 min  step  103,564  seen   1696.8M  (487k pos/s)  lr 2.88e-04  batch loss 0.002197
+    59.0 min  step  105,356  seen   1726.2M  (487k pos/s)  lr 2.72e-04  batch loss 0.002220
+  [held-out]   60.0 min  loss 0.002858  MAE 109.3 cp  <- best, saved nnue_v3.bin
+    60.0 min  step  107,126  seen   1755.2M  (487k pos/s)  lr 2.57e-04  batch loss 0.002331
+    61.0 min  step  108,914  seen   1784.4M  (487k pos/s)  lr 2.42e-04  batch loss 0.002153
+    62.0 min  step  110,706  seen   1813.8M  (487k pos/s)  lr 2.28e-04  batch loss 0.002108
+    63.0 min  step  112,497  seen   1843.2M  (487k pos/s)  lr 2.14e-04  batch loss 0.002187
+    64.0 min  step  114,289  seen   1872.5M  (487k pos/s)  lr 2.00e-04  batch loss 0.002270
+    65.0 min  step  116,082  seen   1901.9M  (487k pos/s)  lr 1.86e-04  batch loss 0.002182
+    66.0 min  step  117,873  seen   1931.2M  (487k pos/s)  lr 1.73e-04  batch loss 0.002175
+    67.0 min  step  119,665  seen   1960.6M  (487k pos/s)  lr 1.61e-04  batch loss 0.002200
+    68.0 min  step  121,457  seen   1990.0M  (488k pos/s)  lr 1.49e-04  batch loss 0.002138
+    69.0 min  step  123,212  seen   2018.7M  (487k pos/s)  lr 1.37e-04  batch loss 0.002199
+  [held-out]   70.0 min  loss 0.002848  MAE 108.9 cp  <- best, saved nnue_v3.bin
+    70.0 min  step  124,979  seen   2047.7M  (487k pos/s)  lr 1.25e-04  batch loss 0.002163
+  [held-out]   70.5 min  loss 0.002846  MAE 109.1 cp  <- best, saved nnue_v3.bin
+
+==================== RESULT ====================
+trained        : 1.18 h, 2,061M positions seen
+NN3 held-out   : loss 0.002846   MAE 109.1 cp
+NN2 held-out   : loss 0.003264   MAE 115.8 cp
+NN3 vs NN2     : loss +12.8% better
+engine scale   : NN2 runs at 61/100; NN3 at 53/100 gives the same cp scale
+quantisation   : max |int - float| 5.0 cp over 500 positions; worst-case accumulator 31493 (< 32767)
+nnue_v3.bin    : 4,731,680 bytes, crc32 756623691
+================================================
+DONE -- upload nnue_v3.bin and this output
