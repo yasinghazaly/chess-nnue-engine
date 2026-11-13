@@ -181,6 +181,10 @@ second. The v10–v9 match was run as "v9 vs v10" (the table shows it from v10's
 side), and v8–v7 was stopped by hand at 164 games, when the two looked too
 close to separate within the game budget.
 
+Version 9, not version 10, is the version that played in the competition. It was
+chosen on a short match played before the deadline, whose score was not
+recorded; these matches, played afterwards, found version 10 stronger.
+
 No game crashed. 102 of the 418 games ended with a player running out of time; in 84 of those the side that
 ran out of time was already at least two pawns down. With those games removed,
 every comparison points the same way (v10 against v9: 60.7 % over 75 games).
@@ -214,7 +218,7 @@ modules and embeds the weights.
 |---|---|---|
 | 7 | hand-written | baseline for the networks |
 | 8 | first network (769 → 512 → 1), [`training/nn1/`](training/nn1/) | trained on 15,859,917 positions without the capture filter; scored below version 7 on the benchmark |
-| 9 | second network (4 buckets, 256 hidden), [`training/nn2/`](training/nn2/) | the network of the 2 × 2 experiment and the gate; its parser kept 282,396,442 positions in 141 files, and training loaded the first 100, 200,722,202 positions (working log) |
+| 9 | second network (4 buckets, 256 hidden), [`training/nn2/`](training/nn2/) | the version that played in the competition; the network of the 2 × 2 experiment and the gate; its parser kept 282,396,442 positions in 141 files, and training loaded the first 100, 200,722,202 positions (working log) |
 | **10** | **third network (above), [`training/nn3/`](training/nn3/)** | **this repository**; the search is version 9's, unchanged |
 
 Ship rules were fixed before testing: a new network version ships at 55 % or
