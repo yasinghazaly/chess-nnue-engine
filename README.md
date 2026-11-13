@@ -122,13 +122,18 @@ weights of both bucketed networks: the second network
 | Queen against bare king, 6 positions | all ≥ +700 | min +1690: pass | min +1692: pass |
 | Colour symmetry (each position against its mirror) | 0 differences | 0 of 3,071: pass | 0 of 3,071: pass |
 | int16 accumulator, worst case | < 32,767 | 24,138: pass | 31,493: pass |
-| Quantisation error, integer against float | ≤ 10 cp | not checkable here | not checkable here |
+| Quantisation error, integer against float | ≤ 10 cp | not checkable here | 6.0 cp: pass |
 
-The quantisation check needs the trainer's float weights, which are not in this
-repository. The third network passes every check that can be run here. Separately,
-the trainer's own check at the end of its run found the integer network within
-5.0 cp of the float one on 500 held-out positions (a different set from the
-gate's; [`training/nn3/training_log.txt`](training/nn3/training_log.txt)).
+The quantisation check compares the int16 network with the trainer's float
+weights. The third network's are in the repository
+([`training/nn3/nnue_v3.pt`](training/nn3/nnue_v3.pt), the checkpoint that was
+exported to `engine/weights/nnue_v3.bin`; a test checks that exporting it gives
+that file byte for byte), so `regate.py` runs the check for it when PyTorch is
+installed: the third network passes all seven criteria. The second network's
+float weights are not in the repository, so it passes six of the seven that can
+be checked. The trainer's own check at the end of its run, on 500 held-out
+positions rather than the benchmark, gave 5.0 cp
+([`training/nn3/training_log.txt`](training/nn3/training_log.txt)).
 
 The gate has seven criteria: the two correlation thresholds and the checks in the
 table above, where `gate_v2.py` counts the int16 range and the quantisation error
@@ -243,6 +248,9 @@ The first import compiles the engine (about a minute).
   file, and with both network flags off exactly like version 7 (evaluations, and
   move, score and node count at every search depth), so move generation and search
   are unchanged since version 7 and the matches above compare evaluations;
+- the third network's float weights export to the engine's int16 weights byte
+  for byte, the trainer drops positions with more than 32 pieces as the run that
+  made those weights did, and the quantisation error is 6.0 cp;
 - the training pipelines run end to end on a small input (parse, train, export,
   gate), repeat bit for bit with a fixed seed and step count, and write weights in
   the engine's format. These need PyTorch:
@@ -279,11 +287,10 @@ for bit on one CPU thread.
   depended on the hardware; a rerun with the default settings will not repeat them
   step for step. Fixed-length, deterministic runs are available for new training
   (`--steps`, `--deterministic`).
-- **Not included:** the trainers' float weights (the second network's float
-  `nnue_v2.bin` and the third network's `nnue_v3.pt`), the training data, the
-  first and second networks' training logs and the sweep's selection set
-  (`select_v2.npz`). Only the int16 weights the engines run are here. The third
-  network's training output is included.
+- **Not included:** the second network's float weights (`nnue_v2.bin`), the
+  training data, the first and second networks' training logs and the sweep's
+  selection set (`select_v2.npz`). For the third network, the float weights and
+  the training output are included.
 - Several figures above come from the working log kept at the time and are marked
   as such; they have not been re-run here.
 

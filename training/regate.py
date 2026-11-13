@@ -7,6 +7,7 @@ Networks
 --------
     second  training/nn2/nnue_v2_int16.bin   2 x (4 buckets x 768 -> 256), 8 heads   ran in version 9
     third   engine/weights/nnue_v3.bin 2 x (8 buckets x 768 -> 384), 8 heads   this engine (version 10)
+            float weights: training/nn3/nnue_v3.pt
 
 Both files hold int16 W1 | int16 B1 | int16 W2 | int32 B2, little-endian, as
 written by train_v2.py / train_v3.py. Scores are computed here with numpy, with
@@ -15,9 +16,14 @@ and gate_v2.eval_quant: same features, buckets, heads, clamps and integer
 division. tests/test_engine.py checks that this evaluator and the engine's
 kernel agree exactly.
 
-gate_v2.py reads the trainer's float weights, which are not in this repository,
-so its quantisation-error criterion (|int - float| <= 10 cp) is reported as not
-checkable. Every other criterion and threshold is gate_v2.py's.
+gate_v2.py's quantisation criterion compares the int16 network with the
+trainer's float weights (|int - float| <= 10 cp on the benchmark). The third
+network's float weights are in the repository (training/nn3/nnue_v3.pt, the
+trainer's checkpoint that was exported to engine/weights/nnue_v3.bin), so the
+check runs for it when PyTorch is installed (requirements-train.txt); without
+PyTorch it is reported as not checkable. The second network's float weights are
+not in the repository, so for it the check is always not checkable. Every
+criterion and threshold is gate_v2.py's.
 
 The gate has seven criteria. Like gate_v2.py, this script also prints the
 side-to-move bonus (a position's score with each side to move, added), but does
@@ -82,7 +88,7 @@ def bucket8(s: int) -> int:
 
 
 class Net:
-    def __init__(self, name: str, path: Path, nb: int, h: int, bucket):
+    def __init__(self, name: str, path: Path, nb: int, h: int, bucket, float_path: Path | None = None):
         raw = path.read_bytes()
         n1, n2, n3 = nb * 768 * h, h, NHEAD * 2 * h
         if len(raw) != 2 * (n1 + n2 + n3) + 4 * NHEAD:
@@ -93,10 +99,24 @@ class Net:
         self.w2 = np.frombuffer(raw, "<i2", n3, o).reshape(NHEAD, 2 * h).astype(np.int64); o += 2 * n3
         self.b2 = np.frombuffer(raw, "<i4", NHEAD, o).astype(np.int64)
         self.name, self.path, self.h, self.bucket, self.crc = name, path, h, bucket, zlib.crc32(raw)
+        self.nb, self.float_path, self.fw = nb, float_path, None
 
-    def eval_stm(self, fen: str) -> int:
-        """Side to move's point of view, gate units; same arithmetic as nnue2_raw."""
-        board = chess.Board(fen)
+    def load_float(self) -> str | None:
+        """Load the trainer's float weights; returns why not, or None when loaded."""
+        if self.float_path is None or not self.float_path.exists():
+            return "float weights not in this repository"
+        try:
+            import torch
+        except ImportError:
+            return "needs PyTorch (requirements-train.txt)"
+        sd = torch.load(self.float_path, map_location="cpu", weights_only=True)
+        w1 = sd["w1"].double().numpy()
+        fac = self.nb * 768                     # train_v3.Net.merged(): factoriser rows added to every bucket
+        w1 = (w1[:fac].reshape(self.nb, 768, self.h) + w1[fac:fac + 768][None]).reshape(fac, self.h)
+        self.fw = (w1, sd["b1"].double().numpy(), sd["w2"].double().numpy(), sd["b2"].double().numpy())
+        return None
+
+    def _features(self, board: chess.Board):
         wk, bk = board.king(chess.WHITE), board.king(chess.BLACK)
         wfl = 7 if (wk & 7) >= 4 else 0
         bfl = (7 if (bk & 7) >= 4 else 0) ^ 56
@@ -106,9 +126,26 @@ class Net:
             col, pt = (0 if p.color else 1), p.piece_type - 1
             iw.append(wb * 768 + col * 384 + pt * 64 + (sq ^ wfl))
             ib.append(bb * 768 + (1 - col) * 384 + pt * 64 + (sq ^ bfl))
+        head = min(max((len(iw) - 2) // 4, 0), NHEAD - 1)
+        return iw, ib, head
+
+    def eval_float_white(self, fen: str) -> float:
+        """Float network, White's point of view, gate units; as gate_v2.eval_float."""
+        board = chess.Board(fen)
+        iw, ib, head = self._features(board)
+        w1, b1, w2, b2 = self.fw
+        aw, ab = b1 + w1[iw].sum(0), b1 + w1[ib].sum(0)
+        us, them = (aw, ab) if board.turn == chess.WHITE else (ab, aw)
+        x = np.clip(np.concatenate([us, them]), 0, 1) ** 2
+        e = float(x @ w2[head] + b2[head]) * 400
+        return e if board.turn == chess.WHITE else -e
+
+    def eval_stm(self, fen: str) -> int:
+        """Side to move's point of view, gate units; same arithmetic as nnue2_raw."""
+        board = chess.Board(fen)
+        iw, ib, head = self._features(board)
         aw = self.b1 + self.w1[iw].sum(0)
         ab = self.b1 + self.w1[ib].sum(0)
-        head = min(max((len(iw) - 2) // 4, 0), NHEAD - 1)
         us, them = (aw, ab) if board.turn == chess.WHITE else (ab, aw)
         w2 = self.w2[head]
         s = int((np.clip(us, 0, QA) ** 2 * w2[:self.h]).sum() + (np.clip(them, 0, QA) ** 2 * w2[self.h:]).sum())
@@ -121,7 +158,13 @@ class Net:
 
 
 SECOND = lambda: Net("second network (v9)", ROOT / "training" / "nn2" / "nnue_v2_int16.bin", 4, 256, bucket4)  # noqa: E731
-THIRD = lambda: Net("third network (v10)", ROOT / "engine" / "weights" / "nnue_v3.bin", 8, 384, bucket8)  # noqa: E731
+THIRD = lambda: Net("third network (v10)", ROOT / "engine" / "weights" / "nnue_v3.bin", 8, 384, bucket8,  # noqa: E731
+                    ROOT / "training" / "nn3" / "nnue_v3.pt")
+
+
+def quantisation_error(net: Net, fens: list[str], scores: np.ndarray) -> float:
+    """gate_v2.py's measure: max |int - float| over the benchmark, gate units."""
+    return float(np.abs(scores - np.array([net.eval_float_white(f) for f in fens])).max())
 
 
 def material(fen: str) -> int:
@@ -199,6 +242,15 @@ def main() -> int:
         kqk = min(net.eval_white(f) for f in KQK)
         w1_max, w2_max = int(np.abs(net.w1).max()), int(np.abs(net.w2).max())
         worst_acc = int(np.abs(net.b1).max() + 32 * w1_max)
+        in_range = w1_max < 32767 and w2_max < 8256 and worst_acc < 32767
+        acc = f"max|w1| {w1_max}, max|w2| {w2_max}, worst accumulator {worst_acc}"
+        why_not = net.load_float()
+        if why_not is None:                     # one criterion, as in gate_v2.py
+            qerr = quantisation_error(net, fens, x)
+            last = ("int16 in range, quantisation error <= 10 cp", in_range and qerr <= 10,
+                    f"{acc}; max|int - float| {qerr:.1f} cp")
+        else:
+            last = ("int16 weights and accumulator in range", in_range, acc)
         checks = [
             ("strict-quiet correlation >= 0.915", ss >= 0.915, f"{ss:.3f}"),
             ("quiet correlation >= 0.880", sq >= 0.880, f"{sq:.3f}"),
@@ -206,15 +258,18 @@ def main() -> int:
             ("Game 90 move 30 (B+N for a pawn down) <= -150", m30 <= -150, f"{m30:+d}"),
             ("queen vs bare king, 6 positions, all >= +700", kqk >= 700, f"min {kqk:+d}"),
             ("exact colour symmetry", sym_bad == 0, f"{sym_bad} violations"),
-            ("int16 weights and accumulator in range", w1_max < 32767 and w2_max < 8256 and worst_acc < 32767,
-             f"max|w1| {w1_max}, max|w2| {w2_max}, worst accumulator {worst_acc}"),
+            last,
         ]
         rel = net.path.relative_to(ROOT).as_posix()
         print(f"\nGATE: {net.name}, {rel} (crc32 {net.crc}); thresholds from gate_v2.py")
         for name, ok, val in checks:
             print(f"  [{'PASS' if ok else 'FAIL'}] {name:50s} {val}")
-        print(f"  [ -- ] {'quantisation error <= 10 cp':50s} not checkable: float weights not in this repository")
-        print(f"  {sum(ok for _, ok, _ in checks)} of {len(checks)} checkable criteria passed")
+        passed = sum(ok for _, ok, _ in checks)
+        if why_not is None:
+            print(f"  {passed} of {len(checks)} criteria passed")
+        else:
+            print(f"  [ -- ] {'quantisation error <= 10 cp':50s} not checkable: {why_not}")
+            print(f"  {passed} of {len(checks)} checkable criteria passed")
         tempo = side_to_move_bonus(net, fens)
         print(f"  reported, not gated: side-to-move bonus median {np.median(tempo):+.0f} cp, mean {tempo.mean():+.0f}, "
               f"95th pct {np.percentile(tempo, 95):+.0f} over {len(tempo)} positions (Stockfish: median +69)")

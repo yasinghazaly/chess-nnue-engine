@@ -131,3 +131,27 @@ def test_second_network_pipeline(sample, tmp_path):
     (tmp_path / "bench_v2.npz").write_bytes(BENCH.read_bytes())
     out = run([ROOT / "training" / "nn2" / "gate_v2.py", "nnue_v2.bin"], tmp_path)
     assert "VERDICT" in out and out.count("[PASS]") + out.count("[FAIL]") == 7
+
+
+# ---- the third network's float weights (training/nn3/nnue_v3.pt) -------------------------
+
+def test_third_network_float_weights_export_to_engine_weights(tmp_path):
+    """The committed float checkpoint is the one the engine's int16 weights came from."""
+    sys.path.insert(0, str(ROOT / "training" / "nn3"))
+    import train_v3
+
+    net = train_v3.Net()
+    net.load_state_dict(torch.load(ROOT / "training" / "nn3" / "nnue_v3.pt", map_location="cpu", weights_only=True))
+    train_v3.export(net, str(tmp_path / "nnue_v3.bin"))
+    assert (tmp_path / "nnue_v3.bin").read_bytes() == (ROOT / "engine" / "weights" / "nnue_v3.bin").read_bytes()
+
+
+def test_regate_quantisation_error_third_network():
+    """gate_v2.py's quantisation criterion (max |int - float| <= 10 cp on the benchmark)."""
+    net = regate.THIRD()
+    assert net.load_float() is None
+    fens = [str(f) for f in np.load(BENCH)["fen"]]
+    scores = np.array([net.eval_white(f) for f in fens], float)
+    qerr = regate.quantisation_error(net, fens, scores)
+    assert qerr <= 10
+    assert round(qerr, 1) == 6.0

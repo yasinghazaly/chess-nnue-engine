@@ -19,6 +19,7 @@ data/*
 
 # Checkpoints and build outputs
 *.pt
+!training/nn3/nnue_v3.pt
 checkpoints/
 build/
 submission.zip
