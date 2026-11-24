@@ -58,7 +58,7 @@ difference is not the effect of the training recipe alone. Training ran at about
 490,000 positions per second on an RTX 4060 Laptop GPU. The trainer's full output
 is in [`training/nn3/training_log.txt`](training/nn3/training_log.txt).
 
-### 3. Why lower training loss gave a worse evaluation
+### 3. Why lower training validation loss gave a worse evaluation
 
 The first long training run of the second network kept improving its held-out
 loss at every checkpoint, while its error in centipawns rose from 198 to 205 and
